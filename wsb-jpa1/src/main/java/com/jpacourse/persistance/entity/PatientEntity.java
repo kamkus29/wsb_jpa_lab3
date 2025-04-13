@@ -2,11 +2,42 @@ package com.jpacourse.persistance.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import java.util.List;
+
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "PATIENT")
 public class PatientEntity {
+	@ManyToOne
+	@JoinColumn(name = "address_id", nullable = false)
+	private AddressEntity address; // jednostronna od strony dziecka (Patient)
+
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+	private List<VisitEntity> visits; // dwustronna – Patient zna swoje wizyty
+
+	@Column(nullable = false)
+	private Boolean isInsured;
+
+	public Boolean getIsInsured() {
+		return isInsured;
+	}
+
+	public void setIsInsured(Boolean isInsured) {
+		this.isInsured = isInsured;
+	}
+	public List<VisitEntity> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(List<VisitEntity> visits) {
+		this.visits = visits;
+	}
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

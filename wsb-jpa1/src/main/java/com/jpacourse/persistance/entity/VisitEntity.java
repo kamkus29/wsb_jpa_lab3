@@ -2,11 +2,26 @@ package com.jpacourse.persistance.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "VISIT")
 public class VisitEntity {
+	@ManyToOne
+	@JoinColumn(name = "doctor_id", nullable = false)
+	private DoctorEntity doctor; // jednostronna od strony dziecka (Visit)
+
+	@ManyToOne
+	@JoinColumn(name = "patient_id", nullable = false)
+	private PatientEntity patient; // jednostronna od strony dziecka (Visit)
+
+	@ManyToOne
+	@JoinColumn(name = "medical_treatment_id", nullable = false)
+	private MedicalTreatmentEntity medicalTreatment; // jednostronna od strony dziecka (Visit)
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +55,30 @@ public class VisitEntity {
 	public void setTime(LocalDateTime time) {
 		this.time = time;
 	}
+
+	public DoctorEntity getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(DoctorEntity doctor) {
+		this.doctor = doctor;
+	}
+
+	public PatientEntity getPatient() {
+		return patient;
+	}
+
+	public void setPatient(PatientEntity patient) {
+		this.patient = patient;
+	}
+
+	public MedicalTreatmentEntity getMedicalTreatment() {
+		return medicalTreatment;
+	}
+
+	public void setMedicalTreatment(MedicalTreatmentEntity medicalTreatment) {
+		this.medicalTreatment = medicalTreatment;
+	}
+
 
 }

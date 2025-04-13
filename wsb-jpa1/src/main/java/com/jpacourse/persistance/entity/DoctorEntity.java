@@ -1,12 +1,17 @@
 package com.jpacourse.persistance.entity;
 
 import com.jpacourse.persistance.enums.Specialization;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.util.List;
 
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "DOCTOR")
 public class DoctorEntity {
+	@OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+	private List<VisitEntity> visits; // dwustronna – Doctor zna swoje wizyty
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
