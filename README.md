@@ -27,7 +27,7 @@ Lab3 to kontynuacja Lab1 i Lab2. Projekt zawiera:
  Autor
 
 **Kamil Kusiak i Bartek Miniach 
-GitHub: [kamkus29](https://github.com/kamkus29)
+GitHub: [kamkus29]https://github.com/kamkus29/wsb_jpa_lab3
 
 pierwsze repo na git lab1 i lab2
 https://github.com/Miniach/wsb_jpa
