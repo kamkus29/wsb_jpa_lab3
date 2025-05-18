@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PatientMapper {
+
     public PatientTo mapToTo(PatientEntity entity) {
         if (entity == null) return null;
         return PatientTo.builder()
@@ -13,7 +14,7 @@ public class PatientMapper {
                 .firstName(entity.getFirstName())
                 .lastName(entity.getLastName())
                 .pesel(entity.getPesel())
-                .isInsured(entity.isInsured())
+                .insured(entity.isInsured())
                 .build();
     }
 
@@ -24,7 +25,7 @@ public class PatientMapper {
                 .firstName(to.getFirstName())
                 .lastName(to.getLastName())
                 .pesel(to.getPesel())
-                .Insured(to.isInsured())
+                .insured(to.isInsured())
                 .build();
     }
 }

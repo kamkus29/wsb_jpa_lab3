@@ -1,75 +1,39 @@
 package com.jpacourse.service;
 
-import com.jpacourse.persistence.dao.PatientDao;
-import com.jpacourse.persistence.dao.VisitDao;
-import com.jpacourse.persistence.entity.AddressEntity;
 import com.jpacourse.persistence.entity.PatientEntity;
-import com.jpacourse.persistence.entity.VisitEntity;
-import com.jpacourse.service.impl.PatientServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
+@SpringBootTest
 public class PatientServiceTest {
 
-    @Mock
-    private PatientDao patientDao;
-
-    @Mock
-    private VisitDao visitDao;
-
-    @InjectMocks
-    private PatientServiceImpl patientService;
-
-    private PatientEntity patient;
-    private VisitEntity visit;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        AddressEntity address = AddressEntity.builder()
-                .addressLine1("ul. Testowa 1")
-                .addressLine2("m. 12")
-                .city("Warszawa")
-                .postalCode("00-001")
-                .build();
-
-        patient = PatientEntity.builder()
-                .firstName("Jan")
-                .lastName("Kowalski")
-                .email("jan.kowalski@example.com")
-                .telephoneNumber("123456789")
-                .patientNumber("P123")
-                .dateOfBirth(LocalDate.of(1990, 1, 1))
-                .Insured(true)
-                .address(address)
-                .build();
-
-        visit = VisitEntity.builder()
-                .description("Wizyta testowa")
-                .time(LocalDateTime.now())
-                .patient(patient)
-                .build();
-    }
+    @Autowired
+    private PatientService patientService;
 
     @Test
-    public void shouldFindVisitsByPatientId() {
-        when(visitDao.findAllByPatientId(1L)).thenReturn(Collections.singletonList(visit));
+    public void shouldCompareSelectVsJoinFetch() {
+        // JOIN FETCH – wczytuje visits w jednej sesji
+        long startJoin = System.nanoTime();
+        List<PatientEntity> joinPatients = patientService.findAllWithVisits();
+        joinPatients.forEach(p -> p.getVisits().size()); // działa, bo visits są już załadowane
+        long endJoin = System.nanoTime();
 
-        List<VisitEntity> result = patientService.findAllVisitsByPatientId(1L);
+        // LAZY SELECT – sesja zamknięta, więc nie próbujemy odczytywać visits
+        long startSelect = System.nanoTime();
+        List<PatientEntity> selectPatients = patientService.findAll();
+        long endSelect = System.nanoTime();
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getDescription()).isEqualTo("Wizyta testowa");
+        long selectDuration = (endSelect - startSelect) / 1_000_000;
+        long joinDuration = (endJoin - startJoin) / 1_000_000;
+
+        System.out.println("SELECT only (lazy): " + selectDuration + " ms");
+        System.out.println("JOIN FETCH (visits eager): " + joinDuration + " ms");
+
+        assertThat(selectPatients).hasSize(joinPatients.size());
     }
 }

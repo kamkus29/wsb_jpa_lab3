@@ -1,27 +1,25 @@
-package com.jpacourse.persistance.dao.impl;
+package com.jpacourse.persistence.dao;
 
-import com.jpacourse.persistance.dao.PatientDao;
-import com.jpacourse.persistance.entity.PatientEntity;
-import com.jpacourse.persistance.entity.VisitEntity;
+import com.jpacourse.persistence.entity.PatientEntity;
+import com.jpacourse.persistence.entity.VisitEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import com.jpacourse.WsbJpaApplication;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = WsbJpaApplication.class)
+@SpringBootTest
 @Transactional
 public class PatientDaoImplTest {
 
-
     @Autowired
     private PatientDao patientDao;
+
 
     @PersistenceContext
     private EntityManager entityManager;

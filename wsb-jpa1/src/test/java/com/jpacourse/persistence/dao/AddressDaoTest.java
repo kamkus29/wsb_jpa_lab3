@@ -1,6 +1,6 @@
-package com.jpacourse.persistance.dao;
+package com.jpacourse.persistence.dao;
 
-import com.jpacourse.persistance.entity.AddressEntity;
+import com.jpacourse.persistence.entity.AddressEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class AddressDaoTest
-{
+public class AddressDaoTest {
+
     @Autowired
     private AddressDao addressDao;
 
@@ -18,11 +18,19 @@ public class AddressDaoTest
     @Test
     public void testShouldFindAddressById() {
         // given
+        AddressEntity newAddress = new AddressEntity();
+        newAddress.setAddressLine1("Nowa");
+        newAddress.setAddressLine2("Test");
+        newAddress.setCity("Wrocław");
+        newAddress.setPostalCode("60-400");
+        AddressEntity saved = addressDao.save(newAddress);
+
         // when
-        AddressEntity addressEntity = addressDao.findOne(901L);
+        AddressEntity found = addressDao.findById(saved.getId()).orElse(null);
+
         // then
-        assertThat(addressEntity).isNotNull();
-        assertThat(addressEntity.getPostalCode()).isEqualTo("60-400");
+        assertThat(found).isNotNull();
+        assertThat(found.getPostalCode()).isEqualTo("60-400");
     }
 
     @Transactional
@@ -37,12 +45,12 @@ public class AddressDaoTest
         long entitiesNumBefore = addressDao.count();
 
         // when
-        final AddressEntity saved = addressDao.save(addressEntity);
+        AddressEntity saved = addressDao.save(addressEntity);
 
         // then
         assertThat(saved).isNotNull();
         assertThat(saved.getId()).isNotNull();
-        assertThat(addressDao.count()).isEqualTo(entitiesNumBefore+1);
+        assertThat(addressDao.count()).isEqualTo(entitiesNumBefore + 1);
     }
 
     @Transactional
@@ -56,17 +64,16 @@ public class AddressDaoTest
         addressEntity.setPostalCode("66-666");
 
         // when
-        final AddressEntity saved = addressDao.save(addressEntity);
+        AddressEntity saved = addressDao.save(addressEntity);
         assertThat(saved.getId()).isNotNull();
-        final AddressEntity newSaved = addressDao.findOne(saved.getId());
-        assertThat(newSaved).isNotNull();
 
-        addressDao.delete(saved.getId());
+        AddressEntity found = addressDao.findById(saved.getId()).orElse(null);
+        assertThat(found).isNotNull();
+
+        addressDao.delete(saved);
 
         // then
-        final AddressEntity removed = addressDao.findOne(saved.getId());
-        assertThat(removed).isNull();
+        AddressEntity afterDelete = addressDao.findById(saved.getId()).orElse(null);
+        assertThat(afterDelete).isNull();
     }
-
-
 }

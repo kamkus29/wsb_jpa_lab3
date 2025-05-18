@@ -1,11 +1,9 @@
 package com.jpacourse.service;
 
-import com.jpacourse.persistence.entity.VisitEntity;
+import com.jpacourse.service.to.VisitTo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.jpacourse.service.to.VisitTo;
-
 
 import java.util.List;
 
@@ -20,7 +18,7 @@ public class VisitServiceTest {
     @Test
     void shouldReturnVisitsForPatientById() {
         // given
-        Long patientId = 3L; // Jan Kowalski z data.sql
+        Long patientId = 1L; // ID zgodne z tym z data.sql
 
         // when
         List<VisitTo> visits = visitService.findAllByPatientId(patientId);

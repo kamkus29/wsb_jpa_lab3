@@ -1,37 +1,39 @@
-package com.jpacourse.persistence.entity;
+	package com.jpacourse.persistence.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+	import jakarta.persistence.*;
+	import lombok.*;
 
-import java.time.LocalDate;
-import java.util.List;
+	import java.time.LocalDate;
+	import java.util.List;
 
-@Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PatientEntity {
+	@Entity
+	@Table(name = "patient_entity")
+	@Getter
+	@Setter
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@Builder
+	public class PatientEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+		@Id
+		@GeneratedValue(strategy = GenerationType.IDENTITY)
+		private Long id;
 
-	private String patientNumber;
-	private String firstName;
-	private String lastName;
-	private String pesel;
-	private String email;
-	private String telephoneNumber;
-	private LocalDate dateOfBirth;
+		@Version
+		private Long version;
 
+		private String firstName;
+		private String lastName;
+		private String email;
+		private String pesel;
+		private String telephoneNumber;
+		private String patientNumber;
+		private LocalDate dateOfBirth;
+		private boolean insured;
 
-	private boolean Insured;
+		@ManyToOne(optional = false)
+		private AddressEntity address;
 
-
-	@ManyToOne(optional = false)
-	private AddressEntity address;
-
-	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<VisitEntity> visits;
-}
+		@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+		private List<VisitEntity> visits;
+	}

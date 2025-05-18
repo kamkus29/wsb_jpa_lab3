@@ -2,8 +2,8 @@ package com.jpacourse.service.impl;
 
 import com.jpacourse.persistence.dao.AddressDao;
 import com.jpacourse.persistence.entity.AddressEntity;
-import com.jpacourse.service.AddressService;
 import com.jpacourse.mapper.AddressMapper;
+import com.jpacourse.service.AddressService;
 import com.jpacourse.service.to.AddressTo;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public AddressTo findById(Long id) {
-        return addressMapper.mapToTo(addressDao.findById(id).orElse(null));
+        return addressDao.findById(id)
+                .map(addressMapper::mapToTo)
+                .orElse(null);
     }
 
     @Override
@@ -42,14 +44,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         addressDao.deleteById(id);
     }
-
-    @Override
-    public void delete(Long id) {
-        deleteById(id);
-    }
-
 }
-
