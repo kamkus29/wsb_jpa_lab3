@@ -1,38 +1,30 @@
 package com.jpacourse.mapper;
 
-import com.jpacourse.dto.AddressTO;
-import com.jpacourse.persistance.entity.AddressEntity;
+import com.jpacourse.persistence.entity.AddressEntity;
+import com.jpacourse.service.to.AddressTo;
+import org.springframework.stereotype.Component;
 
-public final class AddressMapper
-{
-
-    public static AddressTO mapToTO(final AddressEntity addressEntity)
-    {
-        if (addressEntity == null)
-        {
-            return null;
-        }
-        final AddressTO addressTO = new AddressTO();
-        addressTO.setId(addressEntity.getId());
-        addressTO.setAddressLine1(addressEntity.getAddressLine1());
-        addressTO.setAddressLine2(addressEntity.getAddressLine2());
-        addressTO.setCity(addressEntity.getCity());
-        addressTO.setPostalCode(addressEntity.getPostalCode());
-        return addressTO;
+@Component
+public class AddressMapper {
+    public AddressTo mapToTo(AddressEntity entity) {
+        if (entity == null) return null;
+        return AddressTo.builder()
+                .id(entity.getId())
+                .addressLine1(entity.getAddressLine1())
+                .addressLine2(entity.getAddressLine2())
+                .city(entity.getCity())
+                .postalCode(entity.getPostalCode())
+                .build();
     }
 
-    public static AddressEntity mapToEntity(final AddressTO addressTO)
-    {
-        if(addressTO == null)
-        {
-            return null;
-        }
-        AddressEntity addressEntity = new AddressEntity();
-        addressEntity.setId(addressTO.getId());
-        addressEntity.setAddressLine1(addressTO.getAddressLine1());
-        addressEntity.setAddressLine2(addressTO.getAddressLine2());
-        addressEntity.setCity(addressTO.getCity());
-        addressEntity.setPostalCode(addressTO.getPostalCode());
-        return addressEntity;
+    public AddressEntity mapToEntity(AddressTo to) {
+        if (to == null) return null;
+        return AddressEntity.builder()
+                .id(to.getId())
+                .addressLine1(to.getAddressLine1())
+                .addressLine2(to.getAddressLine2())
+                .city(to.getCity())
+                .postalCode(to.getPostalCode())
+                .build();
     }
 }

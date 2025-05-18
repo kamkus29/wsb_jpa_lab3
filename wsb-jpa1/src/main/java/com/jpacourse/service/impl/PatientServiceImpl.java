@@ -1,42 +1,34 @@
 package com.jpacourse.service.impl;
 
-import com.jpacourse.dto.PatientTO;
 import com.jpacourse.mapper.PatientMapper;
-import com.jpacourse.persistance.dao.PatientDao;
-import com.jpacourse.persistance.entity.PatientEntity;
+import com.jpacourse.persistence.dao.PatientDao;
+import com.jpacourse.persistence.dao.VisitDao;
+import com.jpacourse.persistence.entity.VisitEntity;
 import com.jpacourse.service.PatientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jpacourse.service.to.PatientTo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import com.jpacourse.rest.exception.EntityNotFoundException;
-
-
-
-import jakarta.transaction.Transactional;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PatientServiceImpl implements PatientService {
 
-    @Autowired
-    private PatientDao patientDao;
+    private final PatientDao patientDao;
+    private final VisitDao visitDao;
+    private final PatientMapper patientMapper;
 
     @Override
-    public PatientTO findById(Long id) {
-        PatientEntity entity = patientDao.findOne(id);
-        if (entity == null) {
-            throw new EntityNotFoundException("Patient not found");
-        }
-        return PatientMapper.mapToTO(entity);
+    public List<PatientTo> findByLastName(String lastName) {
+        return patientDao.findByLastName(lastName)
+                .stream()
+                .map(patientMapper::mapToTo)
+                .toList();
     }
 
     @Override
-    @Transactional
-    public void delete(Long id) {
-        PatientEntity entity = patientDao.findOne(id);
-        if (entity == null) {
-            throw new EntityNotFoundException("Patient not found");
-        }
-        patientDao.delete(entity);
+    public List<VisitEntity> findAllVisitsByPatientId(Long patientId) {
+        return visitDao.findAllByPatientId(patientId);
     }
 }
-

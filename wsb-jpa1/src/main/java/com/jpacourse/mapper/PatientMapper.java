@@ -1,46 +1,30 @@
 package com.jpacourse.mapper;
 
-import com.jpacourse.dto.PatientTO;
-import com.jpacourse.dto.VisitInPatientTO;
-import com.jpacourse.persistance.entity.PatientEntity;
-import com.jpacourse.persistance.entity.VisitEntity;
+import com.jpacourse.persistence.entity.PatientEntity;
+import com.jpacourse.service.to.PatientTo;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.jpacourse.dto.VisitInPatientTO;
-
-
+@Component
 public class PatientMapper {
-
-    public static PatientTO mapToTO(PatientEntity entity) {
+    public PatientTo mapToTo(PatientEntity entity) {
         if (entity == null) return null;
+        return PatientTo.builder()
+                .id(entity.getId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .pesel(entity.getPesel())
+                .isInsured(entity.isInsured())
+                .build();
+    }
 
-        PatientTO to = new PatientTO();
-        to.setId(entity.getId());
-        to.setFirstName(entity.getFirstName());
-        to.setLastName(entity.getLastName());
-        to.setTelephoneNumber(entity.getTelephoneNumber());
-        to.setEmail(entity.getEmail());
-        to.setPatientNumber(entity.getPatientNumber());
-        to.setDateOfBirth(entity.getDateOfBirth());
-        to.setIsInsured(entity.getIsInsured());
-
-        List<VisitInPatientTO> visitsTO = new ArrayList<>();
-        if (entity.getVisits() != null) {
-            for (VisitEntity visit : entity.getVisits()) {
-                VisitInPatientTO vto = new VisitInPatientTO();
-                vto.setTime(visit.getTime());
-                vto.setDescription(visit.getDescription());
-                vto.setDoctorFullName(
-                        visit.getDoctor().getFirstName() + " " + visit.getDoctor().getLastName()
-                );
-                vto.setTreatmentType(visit.getMedicalTreatment().getType().toString());
-                visitsTO.add(vto);
-            }
-        }
-        to.setVisits(visitsTO);
-
-        return to;
+    public PatientEntity mapToEntity(PatientTo to) {
+        if (to == null) return null;
+        return PatientEntity.builder()
+                .id(to.getId())
+                .firstName(to.getFirstName())
+                .lastName(to.getLastName())
+                .pesel(to.getPesel())
+                .Insured(to.isInsured())
+                .build();
     }
 }

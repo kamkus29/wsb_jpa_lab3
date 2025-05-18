@@ -1,50 +1,75 @@
 package com.jpacourse.service;
 
-import com.jpacourse.dto.PatientTO;
-import jakarta.transaction.Transactional;
+import com.jpacourse.persistence.dao.PatientDao;
+import com.jpacourse.persistence.dao.VisitDao;
+import com.jpacourse.persistence.entity.AddressEntity;
+import com.jpacourse.persistence.entity.PatientEntity;
+import com.jpacourse.persistence.entity.VisitEntity;
+import com.jpacourse.service.impl.PatientServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
-@SpringBootTest
-@Transactional
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 public class PatientServiceTest {
 
-    @Autowired
-    private PatientService patientService;
+    @Mock
+    private PatientDao patientDao;
 
-    @Test
-    public void shouldFindPatientByIdWithVisits() {
-        // when
-        PatientTO patient = patientService.findById(1L);
+    @Mock
+    private VisitDao visitDao;
 
-        // then
-        assertNotNull(patient);
-        assertEquals("Anna", patient.getFirstName());
-        assertTrue(patient.getIsInsured());
-        assertEquals(1, patient.getVisits().size());
+    @InjectMocks
+    private PatientServiceImpl patientService;
 
-        var visit = patient.getVisits().get(0);
-        assertEquals("Pierwsza wizyta", visit.getDescription());
-        assertEquals("Jan Kowalski", visit.getDoctorFullName());
-        assertEquals("EKG", visit.getTreatmentType());
+    private PatientEntity patient;
+    private VisitEntity visit;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        AddressEntity address = AddressEntity.builder()
+                .addressLine1("ul. Testowa 1")
+                .addressLine2("m. 12")
+                .city("Warszawa")
+                .postalCode("00-001")
+                .build();
+
+        patient = PatientEntity.builder()
+                .firstName("Jan")
+                .lastName("Kowalski")
+                .email("jan.kowalski@example.com")
+                .telephoneNumber("123456789")
+                .patientNumber("P123")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .Insured(true)
+                .address(address)
+                .build();
+
+        visit = VisitEntity.builder()
+                .description("Wizyta testowa")
+                .time(LocalDateTime.now())
+                .patient(patient)
+                .build();
     }
 
     @Test
-    public void shouldDeletePatientAndCascadeVisits() {
-        // given
-        Long patientId = 1L;
+    public void shouldFindVisitsByPatientId() {
+        when(visitDao.findAllByPatientId(1L)).thenReturn(Collections.singletonList(visit));
 
-        // when
-        patientService.delete(patientId);
+        List<VisitEntity> result = patientService.findAllVisitsByPatientId(1L);
 
-        // then
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            patientService.findById(patientId);
-        });
-
-        assertTrue(exception.getMessage().contains("not found"));
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getDescription()).isEqualTo("Wizyta testowa");
     }
 }

@@ -1,8 +1,18 @@
 package com.jpacourse.service;
 
-import com.jpacourse.dto.AddressTO;
+import com.jpacourse.service.to.AddressTo;
 
-public interface AddressService
-{
-    AddressTO findById(final Long id);
+import java.util.List;
+
+public interface AddressService {
+
+    List<AddressTo> findAll();
+
+    AddressTo findById(Long id);
+
+    AddressTo save(AddressTo address);
+
+    void deleteById(Long id);
+
+    void delete(Long id);
 }
